@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { revalidateSheetData } from "@/lib/data";
 import { shouldRevalidate } from "@/lib/data/watchStore";
+import { renewIfExpiringSoon } from "@/lib/google/watch";
 
 /**
  * Google Drive push-notification webhook (Phase 7). Google POSTs here when the
@@ -24,6 +25,10 @@ export async function POST(req: NextRequest) {
   if (await shouldRevalidate()) {
     revalidateSheetData();
   }
+
+  // Keep the channel alive between daily cron runs (Hobby-plan friendly): renew
+  // lazily when it's near expiry. Best-effort — never blocks the ack.
+  await renewIfExpiringSoon();
 
   return new NextResponse(null, { status: 200 });
 }

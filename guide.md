@@ -242,8 +242,13 @@ edits to appear near-instantly, enable Drive push notifications:
    ```bash
    curl -H "Authorization: Bearer $CRON_SECRET" https://yourdomain.com/api/cron/renew-watch
    ```
-4. `vercel.json` already schedules `/api/cron/renew-watch` every 6 hours to renew the channel
-   before it expires. On Vercel, set `CRON_SECRET` and the cron is picked up automatically.
+4. `vercel.json` schedules `/api/cron/renew-watch` **once a day** (Vercel **Hobby/free** plan
+   caps crons at once per day — sub-daily needs Pro). To keep the channel alive between daily
+   runs, the webhook **self-renews**: whenever an edit notification arrives and the channel is
+   within 6h of expiry, it re-registers automatically. If the app is completely idle for a day
+   the channel may lapse until the next cron run — polling (Phase 6) covers that gap, so no data
+   is ever missed. On Vercel, set `CRON_SECRET` and the cron is picked up automatically. You can
+   also force a renew any time: `curl -H "Authorization: Bearer $CRON_SECRET" .../api/cron/renew-watch`.
 
 How it works: Google POSTs to `/api/drive/webhook` on any change → we verify the token, debounce
 rapid edits, and revalidate the cache → the next client poll (or Refresh) shows fresh data.
