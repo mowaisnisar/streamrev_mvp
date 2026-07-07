@@ -1,13 +1,18 @@
 import "server-only";
-import { unstable_cache, revalidateTag } from "next/cache";
 import { sheetSource } from "@/lib/data/sheetSource";
-import { env } from "@/lib/env";
 import type { ContractRow, AccessRow } from "@/types/credentialing";
 
 /**
- * Cached data-access layer. All reads go through here. Reads are cached under a
- * single tag so a manual Refresh (Phase 6) or a Drive webhook (Phase 7) can
- * force-revalidate everything with `revalidateSheetData()`.
+ * Data-access layer. All sheet reads go through here.
+ *
+ * Demo mode: reads hit Google Sheets directly on every request — NO caching. This
+ * keeps the app dead simple and correct: a newly-added client, provider, or access
+ * email shows up immediately (both in the dashboard and when resolving tenancy at
+ * sign-in), with no stale-cache window. The dashboard page is force-dynamic and SWR
+ * polls, so freshness is expected here anyway.
+ *
+ * If read volume ever becomes a concern, reintroduce `unstable_cache` around these
+ * with a short `revalidate` and wire `revalidateSheetData()` back to `revalidateTag`.
  */
 
 export const SHEET_DATA_TAG = "sheet-data";
@@ -21,38 +26,28 @@ interface AccessData {
   missingHeaders: string[];
 }
 
-const cachedCredentialing = unstable_cache(
-  async (): Promise<CredentialingData> => sheetSource.getCredentialingRows(),
-  ["credentialing-rows"],
-  { tags: [SHEET_DATA_TAG], revalidate: env.cacheRevalidateSeconds },
-);
-
-const cachedAccess = unstable_cache(
-  async (): Promise<AccessData> => sheetSource.getAccessRows(),
-  ["access-rows"],
-  { tags: [SHEET_DATA_TAG], revalidate: env.cacheRevalidateSeconds },
-);
-
 export async function getCredentialingRows(): Promise<CredentialingData> {
-  return cachedCredentialing();
+  return sheetSource.getCredentialingRows();
 }
 
 export async function getAccessRows(): Promise<AccessData> {
-  return cachedAccess();
+  return sheetSource.getAccessRows();
 }
 
 /**
- * Uncached access-row read, straight from the sheet. Used ONLY by the sign-in gate
- * so a newly-added ClientAccess email can sign in immediately instead of waiting up
- * to `SHEET_CACHE_REVALIDATE_SECONDS` for the cache to expire. Sign-ins are rare, so
- * the extra Sheets round-trip is fine here — do NOT use this on hot paths (jwt/session
- * run on every request and must stay cached).
+ * Explicit fresh read for the sign-in gate. Identical to `getAccessRows()` now that
+ * reads are uncached, but kept as its own name so the intent ("sign-in must never see
+ * stale access rows") survives if caching is ever reintroduced above.
  */
 export async function getAccessRowsFresh(): Promise<AccessData> {
   return sheetSource.getAccessRows();
 }
 
-/** Force the next read to refetch from the sheet. Used by Refresh + Drive webhook. */
+/**
+ * No-op in demo mode (reads are already uncached). Kept so the manual Refresh button
+ * and the Drive webhook still have a safe function to call; the next read is always
+ * fresh regardless.
+ */
 export function revalidateSheetData(): void {
-  revalidateTag(SHEET_DATA_TAG);
+  // Intentionally empty — nothing to invalidate when reads are uncached.
 }

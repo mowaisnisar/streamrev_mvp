@@ -89,9 +89,6 @@ export function DashboardClient({
     : null;
 
   const isAdminAll = payload.activeClientId === ADMIN_CLIENT_ID;
-  const scopeDesc = isAdminAll
-    ? "You’re viewing every client’s providers across all books of business."
-    : `You’re viewing the providers under ${activeClientName}.`;
 
   return (
     <div className="page">
@@ -115,10 +112,6 @@ export function DashboardClient({
           <h1 className="pagehead__title">
             {isAdminAll ? "All clients — Admin" : activeClientName}
           </h1>
-          <p className="pagehead__desc">
-            Track where every provider stands in payer credentialing and contracting — from not
-            started, through in-progress and action-needed, to fully in-network. {scopeDesc}
-          </p>
 
           <div className="metabar">
             <span className="metachip">
