@@ -41,6 +41,17 @@ export async function getAccessRows(): Promise<AccessData> {
   return cachedAccess();
 }
 
+/**
+ * Uncached access-row read, straight from the sheet. Used ONLY by the sign-in gate
+ * so a newly-added ClientAccess email can sign in immediately instead of waiting up
+ * to `SHEET_CACHE_REVALIDATE_SECONDS` for the cache to expire. Sign-ins are rare, so
+ * the extra Sheets round-trip is fine here — do NOT use this on hot paths (jwt/session
+ * run on every request and must stay cached).
+ */
+export async function getAccessRowsFresh(): Promise<AccessData> {
+  return sheetSource.getAccessRows();
+}
+
 /** Force the next read to refetch from the sheet. Used by Refresh + Drive webhook. */
 export function revalidateSheetData(): void {
   revalidateTag(SHEET_DATA_TAG);

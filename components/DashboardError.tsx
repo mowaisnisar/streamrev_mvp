@@ -3,16 +3,19 @@ export function DashboardError({ message }: { message: string }) {
   return (
     <main className="auth-shell">
       <div className="auth-card">
-        <span className="auth-brand">StreamRev</span>
-        <h1 className="auth-title">We couldn&rsquo;t reach the sheet</h1>
+        <div className="auth-logo">
+          <span className="auth-logo__mark" aria-hidden="true" />
+          <span className="auth-logo__word">StreamRev</span>
+        </div>
+        <h1 className="auth-title">We couldn&rsquo;t load your data</h1>
         <p className="auth-sub">
           The credentialing data source didn&rsquo;t respond. This is usually a temporary
-          connection or configuration issue.
+          connection or configuration issue — trying again often resolves it.
         </p>
         <div className="banner banner--error" style={{ marginTop: 0 }}>
           {message}
         </div>
-        <a href="/dashboard" className="auth-btn" style={{ marginTop: "1rem" }}>
+        <a href="/dashboard" className="auth-btn" style={{ marginTop: "1.1rem" }}>
           Try again
         </a>
       </div>

@@ -4,7 +4,7 @@ import Credentials from "next-auth/providers/credentials";
 import { UpstashRedisAdapter } from "@auth/upstash-redis-adapter";
 import { Redis } from "@upstash/redis";
 import { authConfig } from "@/lib/auth/auth.config";
-import { findAccess } from "@/lib/auth/access";
+import { findAccess, findAccessFresh } from "@/lib/auth/access";
 
 /** Dev-only, email-only login (no magic link). Enabled by ALLOW_DEV_LOGIN=true. */
 export const devLoginEnabled = process.env.ALLOW_DEV_LOGIN === "true";
@@ -53,7 +53,8 @@ const providers = [
           credentials: { email: { label: "Email", type: "email" } },
           async authorize(creds) {
             const email = String(creds?.email ?? "").trim().toLowerCase();
-            const access = await findAccess(email);
+            // Fresh (uncached) read so a just-added ClientAccess email works immediately.
+            const access = await findAccessFresh(email);
             if (!access) return null; // must be a known ClientAccess email
             return { id: email, email, name: access.display_name ?? email };
           },
@@ -73,8 +74,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   callbacks: {
     ...authConfig.callbacks,
     // Deny sign-in for any email not present in ClientAccess (no self-provisioning).
+    // Fresh read here too so newly-added emails aren't blocked by the sheet cache.
     async signIn({ user }) {
-      const access = await findAccess(user.email);
+      const access = await findAccessFresh(user.email);
       return access != null;
     },
     // Resolve tenancy from the sheet and stamp it onto the JWT. Runs on sign-in and

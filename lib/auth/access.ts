@@ -1,11 +1,25 @@
 import "server-only";
-import { getAccessRows } from "@/lib/data";
+import { getAccessRows, getAccessRowsFresh } from "@/lib/data";
 import type { AccessRow } from "@/types/credentialing";
 
 /** Look up a user's ClientAccess row by email (case-insensitive). Null if not found. */
 export async function findAccess(email: string | null | undefined): Promise<AccessRow | null> {
   if (!email) return null;
   const { rows } = await getAccessRows();
+  const target = email.trim().toLowerCase();
+  return rows.find((r) => r.user_email === target) ?? null;
+}
+
+/**
+ * Same lookup as `findAccess`, but bypasses the sheet cache. Use this ONLY at the
+ * sign-in gate so a freshly-added ClientAccess email works right away rather than
+ * waiting for the cache to revalidate. See getAccessRowsFresh() for the trade-off.
+ */
+export async function findAccessFresh(
+  email: string | null | undefined,
+): Promise<AccessRow | null> {
+  if (!email) return null;
+  const { rows } = await getAccessRowsFresh();
   const target = email.trim().toLowerCase();
   return rows.find((r) => r.user_email === target) ?? null;
 }

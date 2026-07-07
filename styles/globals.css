@@ -5,22 +5,26 @@
  */
 
 :root {
-  /* Brand */
+  /* Brand — teal, with a cyan partner for gradients and a deep ink for text/hover */
   --brand: #0e7490; /* teal */
-  --brand-ink: #0b5a70;
-  --brand-tint: #e6f3f6;
+  --brand-ink: #0b5a70; /* hover / pressed */
+  --brand-deep: #134e5a; /* deepest — headings on tint */
+  --brand-bright: #0891b2; /* cyan — gradient top */
+  --brand-tint: #e4f4f7;
+  --brand-tint-2: #d3ecf1;
+  --brand-gradient: linear-gradient(135deg, #0aa2c0 0%, #0e7490 55%, #0b5a70 100%);
 
   /* Surfaces */
-  --bg: #f6f8f9;
+  --bg: #f4f7f8;
   --surface: #ffffff;
-  --surface-2: #f9fbfc;
-  --border: #e2e8f0;
-  --border-strong: #cbd5e1;
+  --surface-2: #f7fafb;
+  --border: #e4e9ee;
+  --border-strong: #cdd7e0;
 
   /* Text */
-  --text: #0f172a;
-  --text-muted: #64748b;
-  --text-faint: #94a3b8;
+  --text: #0f1e2b;
+  --text-muted: #5a6b7a;
+  --text-faint: #93a2af;
 
   /* Status color tokens */
   --status-not-started: #94a3b8; /* slate */
@@ -40,11 +44,12 @@
   --sev-high: #dc2626;
   --sev-med: #d97706;
 
-  --radius: 12px;
-  --radius-sm: 8px;
-  --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.06);
-  --shadow: 0 4px 16px rgba(15, 23, 42, 0.08);
-  --shadow-lg: -8px 0 32px rgba(15, 23, 42, 0.16);
+  --radius: 14px;
+  --radius-sm: 9px;
+  --shadow-sm: 0 1px 2px rgba(15, 30, 43, 0.05), 0 1px 1px rgba(15, 30, 43, 0.03);
+  --shadow: 0 6px 20px -6px rgba(15, 30, 43, 0.12);
+  --shadow-lg: -8px 0 40px rgba(15, 30, 43, 0.18);
+  --shadow-brand: 0 18px 44px -18px rgba(14, 116, 144, 0.45);
 
   --font-sans: var(--font-plex-sans), system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
   --font-mono: var(--font-plex-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
@@ -106,19 +111,53 @@ button {
   display: grid;
   place-items: center;
   padding: 2rem 1rem;
-  background: linear-gradient(160deg, var(--brand-tint), var(--bg) 55%);
+  background:
+    radial-gradient(1100px 560px at 12% -12%, var(--brand-tint), transparent 58%),
+    radial-gradient(900px 520px at 108% 112%, #e0f2fe, transparent 55%),
+    var(--bg);
 }
 .auth-card {
   width: 100%;
-  max-width: 420px;
+  max-width: 424px;
+  position: relative;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   box-shadow: var(--shadow);
-  padding: 2rem;
+  padding: 2.25rem 2rem 1.75rem;
   display: flex;
   flex-direction: column;
-  gap: 0.65rem;
+  gap: 0.55rem;
+  overflow: hidden;
+}
+/* Thin brand accent along the top edge of the card. */
+.auth-card::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 4px;
+  background: var(--brand-gradient);
+}
+.auth-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin-bottom: 0.35rem;
+}
+.auth-logo__mark {
+  width: 30px;
+  height: 30px;
+  border-radius: 9px;
+  background: var(--brand-gradient);
+  box-shadow: var(--shadow-brand);
+  flex-shrink: 0;
+}
+.auth-logo__word {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.1rem;
+  letter-spacing: -0.01em;
+  color: var(--text);
 }
 .auth-brand {
   font-family: var(--font-mono);
@@ -130,13 +169,17 @@ button {
 }
 .auth-title {
   font-family: var(--font-display);
-  font-size: 1.6rem;
-  margin: 0;
+  font-size: 1.55rem;
+  line-height: 1.2;
+  letter-spacing: -0.015em;
+  margin: 0.2rem 0 0;
+  color: var(--text);
 }
 .auth-sub {
   color: var(--text-muted);
-  margin: 0 0 0.5rem;
-  font-size: 0.95rem;
+  margin: 0 0 0.75rem;
+  font-size: 0.92rem;
+  line-height: 1.55;
 }
 .auth-form {
   display: flex;
@@ -150,11 +193,17 @@ button {
 }
 .auth-input {
   width: 100%;
-  padding: 0.7rem 0.85rem;
+  padding: 0.72rem 0.85rem;
   border: 1px solid var(--border-strong);
   border-radius: var(--radius-sm);
   font-size: 0.95rem;
   font-family: inherit;
+  color: var(--text);
+  background: var(--surface);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.auth-input::placeholder {
+  color: var(--text-faint);
 }
 .auth-input:focus {
   border-color: var(--brand);
@@ -162,40 +211,117 @@ button {
   box-shadow: 0 0 0 3px var(--brand-tint);
 }
 .auth-btn {
-  margin-top: 0.5rem;
-  background: var(--brand);
+  margin-top: 0.6rem;
+  background: var(--brand-gradient);
   color: #fff;
   border: none;
   border-radius: var(--radius-sm);
-  padding: 0.7rem 1rem;
+  padding: 0.78rem 1rem;
   font-size: 0.95rem;
   font-weight: 600;
-  transition: background 0.15s ease;
+  letter-spacing: 0.01em;
+  box-shadow: var(--shadow-brand);
+  transition: transform 0.12s ease, box-shadow 0.15s ease, filter 0.15s ease;
   text-align: center;
 }
 .auth-btn:hover {
-  background: var(--brand-ink);
+  filter: brightness(1.05);
+  box-shadow: 0 22px 50px -18px rgba(14, 116, 144, 0.55);
+}
+.auth-btn:active {
+  transform: translateY(1px);
+}
+.auth-btn:disabled {
+  opacity: 0.72;
+  cursor: default;
+  filter: none;
+  box-shadow: var(--shadow-sm);
+}
+.auth-btn__busy {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.spinner {
+  display: inline-block;
+  width: 0.9em;
+  height: 0.9em;
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spinner-rotate 0.6s linear infinite;
+}
+@keyframes spinner-rotate {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .spinner {
+    animation-duration: 1.5s;
+  }
 }
 .auth-btn--ghost {
   background: transparent;
   color: var(--brand);
   border: 1px solid var(--border-strong);
   display: inline-block;
+  box-shadow: none;
 }
 .auth-btn--ghost:hover {
   background: var(--surface-2);
+  filter: none;
+  box-shadow: none;
 }
 .auth-error {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
   background: var(--tint-needs-action);
-  color: var(--status-needs-action);
+  color: #b42318;
+  border: 1px solid #fbcfc9;
   border-radius: var(--radius-sm);
-  padding: 0.6rem 0.8rem;
-  font-size: 0.85rem;
+  padding: 0.65rem 0.8rem;
+  font-size: 0.86rem;
+  line-height: 1.45;
+  margin-bottom: 0.25rem;
+}
+.auth-error__icon {
+  flex-shrink: 0;
+  margin-top: 0.05rem;
+}
+.auth-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 1.15rem 0 0.9rem;
 }
 .auth-foot {
   color: var(--text-faint);
   font-size: 0.78rem;
-  margin: 0.5rem 0 0;
+  line-height: 1.5;
+  margin: 0;
+}
+/* Subtle developer-mode notice — intentionally understated so it never looks like
+   part of the product. Replaces the old loud banner that printed the env-var name. */
+.dev-note {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.9rem;
+  padding: 0.5rem 0.7rem;
+  background: var(--surface-2);
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius-sm);
+  font-size: 0.76rem;
+  color: var(--text-muted);
+}
+.dev-note__dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--status-in-progress);
+  box-shadow: 0 0 0 3px var(--tint-in-progress);
+  flex-shrink: 0;
 }
 
 .sr-only {
@@ -228,8 +354,10 @@ button {
   position: sticky;
   top: 0;
   z-index: 20;
-  background: var(--surface);
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: saturate(1.4) blur(10px);
   border-bottom: 1px solid var(--border);
+  box-shadow: 0 1px 0 rgba(15, 30, 43, 0.02), 0 6px 20px -18px rgba(15, 30, 43, 0.35);
 }
 .topbar__inner {
   display: flex;
@@ -246,10 +374,11 @@ button {
   font-size: 1.05rem;
 }
 .brandmark__dot {
-  width: 22px;
-  height: 22px;
-  border-radius: 6px;
-  background: var(--brand);
+  width: 24px;
+  height: 24px;
+  border-radius: 7px;
+  background: var(--brand-gradient);
+  box-shadow: var(--shadow-brand);
   display: inline-block;
 }
 .topbar__spacer {
@@ -318,6 +447,7 @@ button {
 .pagehead__title {
   font-family: var(--font-display);
   font-size: 1.7rem;
+  letter-spacing: -0.02em;
   margin: 0;
 }
 .pagehead__meta {
@@ -396,6 +526,12 @@ button {
   border-radius: var(--radius);
   box-shadow: var(--shadow-sm);
   padding: 1rem 1.15rem;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+}
+.stat:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow);
+  border-color: var(--border-strong);
 }
 .stat__label {
   font-size: 0.78rem;
@@ -620,12 +756,14 @@ button {
   background: var(--surface-2);
 }
 .btn--primary {
-  background: var(--brand);
+  background: var(--brand-gradient);
   color: #fff;
-  border-color: var(--brand);
+  border-color: transparent;
+  box-shadow: 0 10px 22px -12px rgba(14, 116, 144, 0.55);
 }
 .btn--primary:hover {
-  background: var(--brand-ink);
+  background: var(--brand-gradient);
+  filter: brightness(1.06);
 }
 
 .table-scroll {
