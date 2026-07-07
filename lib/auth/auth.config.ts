@@ -6,6 +6,10 @@ import type { NextAuthConfig } from "next-auth";
  * can safely use googleapis/server-only without leaking into the edge bundle.
  */
 export const authConfig = {
+  // Trust the host/proxy header on Vercel (and any reverse-proxied deploy).
+  // Without this, Auth.js throws `UntrustedHost` when the request host differs
+  // from AUTH_URL/NEXTAUTH_URL — which surfaces as a bare, unstyled 500 page.
+  trustHost: true,
   pages: {
     signIn: "/signin",
     verifyRequest: "/signin/verify",
