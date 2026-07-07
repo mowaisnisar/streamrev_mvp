@@ -47,8 +47,19 @@ export function getGoogleCredentials(): { clientEmail: string; privateKey: strin
 }
 
 function normalizeKey(key: string): string {
+  let k = key.trim();
+  // Env values are often pasted wrapped in surrounding quotes (e.g. copied from a
+  // .env line). Those quotes become part of the value and corrupt the PEM, causing
+  // `error:1E08010C:DECODER routines::unsupported`. Strip a single matching pair.
+  if (
+    (k.startsWith('"') && k.endsWith('"')) ||
+    (k.startsWith("'") && k.endsWith("'"))
+  ) {
+    k = k.slice(1, -1);
+  }
   // Env vars often store the key with escaped newlines; restore real newlines.
-  return key.includes("\\n") ? key.replace(/\\n/g, "\n") : key;
+  if (k.includes("\\n")) k = k.replace(/\\n/g, "\n");
+  return k.trim();
 }
 
 export const env = {
