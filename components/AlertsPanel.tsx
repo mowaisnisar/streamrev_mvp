@@ -14,8 +14,14 @@ export function AlertsPanel({
   return (
     <section className="alerts" aria-label="Alerts">
       <div className="alerts__head">
-        Alerts
-        {alerts.length > 0 && <span className="alerts__count">{alerts.length}</span>}
+        <div className="alerts__head-row">
+          Needs attention
+          {alerts.length > 0 && <span className="alerts__count">{alerts.length}</span>}
+        </div>
+        <p className="alerts__hint">
+          Denials, information requests, and re-credentialing due soon. Select one to open the
+          provider.
+        </p>
       </div>
 
       {alerts.length === 0 ? (

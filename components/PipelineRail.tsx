@@ -11,6 +11,10 @@ export function PipelineRail({ pipeline, total }: { pipeline: PipelineCounts; to
         <span className="rail__title">Credentialing pipeline</span>
         <span className="rail__total">{total} contract lines</span>
       </div>
+      <p className="rail__hint">
+        Each segment is one provider–payer contract line, grouped by where it sits in
+        credentialing. Hover a segment for its count.
+      </p>
 
       <div className="rail__bar" role="img" aria-label="Pipeline distribution by status">
         {BUCKET_ORDER.map((bucket) => {

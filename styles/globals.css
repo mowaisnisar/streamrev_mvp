@@ -373,6 +373,18 @@ button {
   font-weight: 700;
   font-size: 1.05rem;
 }
+.brandmark__tag {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--brand-ink);
+  background: var(--brand-tint);
+  border-radius: 5px;
+  padding: 0.12rem 0.4rem;
+  margin-left: 0.1rem;
+}
 .brandmark__dot {
   width: 24px;
   height: 24px;
@@ -442,7 +454,19 @@ button {
 
 /* ============================= Page header ============================= */
 .pagehead {
-  padding: 1.5rem 0 0.5rem;
+  padding: 1.6rem 0 0.25rem;
+}
+.pagehead__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--brand);
+  font-weight: 600;
+  margin-bottom: 0.5rem;
 }
 .pagehead__title {
   font-family: var(--font-display);
@@ -450,10 +474,81 @@ button {
   letter-spacing: -0.02em;
   margin: 0;
 }
-.pagehead__meta {
+.pagehead__desc {
   color: var(--text-muted);
-  font-size: 0.9rem;
-  margin: 0.15rem 0 0;
+  font-size: 0.93rem;
+  line-height: 1.55;
+  max-width: 68ch;
+  margin: 0.4rem 0 0;
+}
+.demo-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-family: var(--font-sans);
+  font-size: 0.64rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: #92400e;
+  background: var(--tint-in-progress);
+  border: 1px solid #fcd34d;
+  padding: 0.12rem 0.5rem;
+  border-radius: 999px;
+}
+
+/* Meta chips — "what's in this view" at a glance */
+.metabar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+  margin-top: 1rem;
+}
+.metachip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 0.32rem 0.72rem;
+  box-shadow: var(--shadow-sm);
+}
+.metachip strong {
+  color: var(--text);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.metachip__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* Section heading — title + one-line hint above each block */
+.section-head {
+  margin: 1.9rem 0 0.15rem;
+}
+.section-head:first-child {
+  margin-top: 1.25rem;
+}
+.section-head__title {
+  font-family: var(--font-display);
+  font-size: 1.08rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  margin: 0;
+  color: var(--text);
+}
+.section-head__hint {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  line-height: 1.5;
+  margin: 0.2rem 0 0;
 }
 
 /* ============================= Pipeline rail ============================= */
@@ -478,6 +573,13 @@ button {
 .rail__total {
   color: var(--text-muted);
   font-size: 0.82rem;
+  font-variant-numeric: tabular-nums;
+}
+.rail__hint {
+  color: var(--text-muted);
+  font-size: 0.83rem;
+  line-height: 1.5;
+  margin: -0.2rem 0 0.85rem;
 }
 .rail__bar {
   display: flex;
@@ -571,11 +673,18 @@ button {
 .alerts__head {
   padding: 0.9rem 1.15rem;
   border-bottom: 1px solid var(--border);
-  font-weight: 600;
-  font-size: 0.95rem;
+}
+.alerts__head-row {
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  font-weight: 700;
+  font-size: 0.98rem;
+}
+.alerts__hint {
+  color: var(--text-muted);
+  font-size: 0.82rem;
+  margin-top: 0.15rem;
 }
 .alerts__count {
   background: var(--tint-needs-action);
@@ -718,6 +827,35 @@ button {
   box-shadow: var(--shadow-sm);
   margin-top: 1.25rem;
   overflow: hidden;
+}
+.panel__head {
+  padding: 0.95rem 1.15rem 0.85rem;
+  border-bottom: 1px solid var(--border);
+}
+.panel__head-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.panel__title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.98rem;
+  letter-spacing: -0.01em;
+}
+.panel__hint {
+  color: var(--text-muted);
+  font-size: 0.82rem;
+  margin-top: 0.15rem;
+}
+.count-chip {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--brand-ink);
+  background: var(--brand-tint);
+  border-radius: 999px;
+  padding: 0.08rem 0.5rem;
+  font-variant-numeric: tabular-nums;
 }
 .toolbar {
   display: flex;

@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { auth } from "@/lib/auth/auth";
+import { auth, devLoginEnabled } from "@/lib/auth/auth";
 import { buildDashboardPayload } from "@/lib/data/payload";
 import { DashboardClient } from "@/components/DashboardClient";
 import { DashboardError } from "@/components/DashboardError";
@@ -14,7 +14,13 @@ export default async function DashboardPage() {
   try {
     // Server-fetch already-tenant-scoped data (Phase 3) + aggregates/alerts (Phase 2).
     const initial = await buildDashboardPayload(session);
-    return <DashboardClient initial={initial} userName={session.user.displayName ?? session.user.email ?? ""} />;
+    return (
+      <DashboardClient
+        initial={initial}
+        userName={session.user.displayName ?? session.user.email ?? ""}
+        demo={devLoginEnabled}
+      />
+    );
   } catch (err) {
     return (
       <DashboardError

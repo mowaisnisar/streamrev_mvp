@@ -5,6 +5,7 @@ import type { DashboardPayload } from "@/lib/data/payload";
 import { ADMIN_CLIENT_ID } from "@/types/credentialing";
 import { providersToCsv } from "@/lib/domain/csv";
 import { useProviderFilters } from "@/lib/ui/useProviderFilters";
+import { relativeTime } from "@/lib/ui/format";
 import { TopBar } from "@/components/TopBar";
 import { PipelineRail } from "@/components/PipelineRail";
 import { StatCards } from "@/components/StatCards";
@@ -28,9 +29,11 @@ async function fetcher(url: string): Promise<DashboardPayload> {
 export function DashboardClient({
   initial,
   userName,
+  demo = false,
 }: {
   initial: DashboardPayload;
   userName: string;
+  demo?: boolean;
 }) {
   const [clientId, setClientId] = useState<string>(initial.activeClientId);
   const [openNpi, setOpenNpi] = useState<string | null>(null);
@@ -85,10 +88,10 @@ export function DashboardClient({
     ? payload.providers.find((p) => p.npi === openNpi) ?? null
     : null;
 
-  const headerLine =
-    payload.activeClientId === ADMIN_CLIENT_ID
-      ? `${payload.clients.length} clients · ${payload.aggregates.providerCount} providers`
-      : `${payload.aggregates.providerCount} providers`;
+  const isAdminAll = payload.activeClientId === ADMIN_CLIENT_ID;
+  const scopeDesc = isAdminAll
+    ? "You’re viewing every client’s providers across all books of business."
+    : `You’re viewing the providers under ${activeClientName}.`;
 
   return (
     <div className="page">
@@ -105,15 +108,45 @@ export function DashboardClient({
 
       <main className="container">
         <div className="pagehead">
+          <span className="pagehead__eyebrow">
+            Provider Credentialing
+            {demo && <span className="demo-badge">Demo data</span>}
+          </span>
           <h1 className="pagehead__title">
-            {payload.activeClientId === ADMIN_CLIENT_ID
-              ? "All clients — Admin"
-              : activeClientName}
+            {isAdminAll ? "All clients — Admin" : activeClientName}
           </h1>
-          <p className="pagehead__meta">
-            {headerLine} · Source: StreamRev credentialing sheet
-            {userName ? ` · Signed in as ${userName}` : ""}
+          <p className="pagehead__desc">
+            Track where every provider stands in payer credentialing and contracting — from not
+            started, through in-progress and action-needed, to fully in-network. {scopeDesc}
           </p>
+
+          <div className="metabar">
+            <span className="metachip">
+              <span
+                className="metachip__dot"
+                style={{ background: "var(--brand)" }}
+                aria-hidden
+              />
+              Showing <strong>{isAdminAll ? "All clients" : activeClientName}</strong>
+            </span>
+            <span className="metachip">
+              <strong>{payload.aggregates.providerCount}</strong> providers
+            </span>
+            <span className="metachip">
+              <strong>{payload.aggregates.totalContractLines}</strong> contract lines
+            </span>
+            {isAdminAll && (
+              <span className="metachip">
+                <strong>{payload.clients.length}</strong> clients
+              </span>
+            )}
+            <span className="metachip">Synced {relativeTime(payload.syncedAt)}</span>
+            {userName && (
+              <span className="metachip">
+                Signed in as <strong>{userName}</strong>
+              </span>
+            )}
+          </div>
         </div>
 
         {error && (
@@ -138,18 +171,34 @@ export function DashboardClient({
         ) : (
           <>
             {showClient && (
-              <AdminClientCounts
-                providers={payload.providers}
-                clients={payload.clients}
-                onSelect={setClientId}
-              />
+              <>
+                <div className="section-head">
+                  <h2 className="section-head__title">Clients</h2>
+                  <p className="section-head__hint">
+                    Provider count per client. Select one to drill into just that book.
+                  </p>
+                </div>
+                <AdminClientCounts
+                  providers={payload.providers}
+                  clients={payload.clients}
+                  onSelect={setClientId}
+                />
+              </>
             )}
+
             <PipelineRail
               pipeline={payload.aggregates.pipeline}
               total={payload.aggregates.totalContractLines}
             />
+
+            <div className="section-head">
+              <h2 className="section-head__title">At a glance</h2>
+              <p className="section-head__hint">Key credentialing numbers for the current view.</p>
+            </div>
             <StatCards agg={payload.aggregates} />
+
             <AlertsPanel alerts={payload.alerts} showClient={showClient} onSelect={setOpenNpi} />
+
             <ProviderTable
               providers={filtered}
               showClient={showClient}

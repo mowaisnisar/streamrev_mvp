@@ -24,7 +24,12 @@ function MiniRail({ provider }: { provider: Provider }) {
   for (const c of provider.contracts) counts[statusMeta(c.status).bucket] += 1;
   const total = provider.contracts.length || 1;
   return (
-    <span className="mini-rail" role="img" aria-label="Contract status mix">
+    <span
+      className="mini-rail"
+      role="img"
+      aria-label="Contract status mix"
+      title="This provider's contract lines by credentialing status"
+    >
       {BUCKET_ORDER.map((b) =>
         counts[b] > 0 ? (
           <span
@@ -82,6 +87,16 @@ export function ProviderTable({
 }) {
   return (
     <section className="panel section" aria-label="Providers">
+      <div className="panel__head">
+        <div className="panel__head-row">
+          <span className="panel__title">Providers</span>
+          <span className="count-chip">{totalCount}</span>
+        </div>
+        <p className="panel__hint">
+          Every provider in this view and their overall credentialing status. Select a row to see
+          full payer, contract, and document detail.
+        </p>
+      </div>
       <div className="toolbar">
         <input
           className="toolbar__search"
@@ -180,7 +195,11 @@ export function ProviderTable({
                         <span>
                           <span className="provider-cell__name">
                             {p.name ?? "—"}
-                            {isBH && <span className="tag-bh">BH</span>}
+                            {isBH && (
+                              <span className="tag-bh" title="Behavioral Health provider">
+                                BH
+                              </span>
+                            )}
                           </span>
                           <br />
                           <span className="provider-cell__type">{p.providerType ?? ""}</span>
@@ -199,7 +218,11 @@ export function ProviderTable({
                     <td>
                       <span className="recred-cell">
                         {formatDate(recred)}
-                        {isWithinDays(recred, 90) && <span className="pill-nd">Nd</span>}
+                        {isWithinDays(recred, 90) && (
+                          <span className="pill-nd" title="Re-credentialing due within 90 days">
+                            Due soon
+                          </span>
+                        )}
                       </span>
                     </td>
                     <td className="chevron" aria-hidden>

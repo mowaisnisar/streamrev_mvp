@@ -30,6 +30,7 @@ export function TopBar({
         <span className="brandmark">
           <span className="brandmark__dot" aria-hidden />
           StreamRev
+          <span className="brandmark__tag">Credentialing</span>
         </span>
 
         {role === "admin" ? (
